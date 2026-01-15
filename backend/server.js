@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-dotenv.config();
+dotenv.config();//so that we can use process.env.
 
 
 import express from "express";
@@ -8,6 +8,8 @@ import path from "path";
 import { fileURLToPath } from 'url';
 import connectDB from "./config/db.js"
 import errorHandler from "./middleware/errorHandler.js"
+
+import authRoutes from "./routes/authRoutes.js"
 
 //*ES6 module_dirname alternative
 const __filename = fileURLToPath(import.meta.url);
@@ -18,6 +20,8 @@ const app = express();
 
 //*connect to MongoDB
 connectDB();
+
+//? Middlewares-Request aur response ke bich wala system(isko backend ke main file me dalte hai taki pura backend me aa jaye middleware)
 
 //*Middlewares to handle CORS
 app.use(
@@ -39,9 +43,12 @@ app.use(express.urlencoded({extended:true}));//This middleware lets Express read
 app.use("/uploads",express.static(path.join(__dirname,"uploads")));//static files like pdf,image.This line makes the uploads folder publicly accessible so files inside it can be viewed or downloaded through the browser.
 
 //Routes
+app.use("/api/auth",authRoutes);
+
+
+
+
 app.use(errorHandler);
-
-
 
 //*404 handler
 app.use((req,res)=>{//It runs when none of your defined routes match the incoming request.
