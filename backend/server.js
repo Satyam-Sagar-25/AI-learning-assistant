@@ -21,7 +21,7 @@ const app = express();
 //*connect to MongoDB
 connectDB();
 
-//? Middlewares-Request aur response ke bich wala system(isko backend ke main file me dalte hai taki pura backend me aa jaye middleware)
+//? Middlewares- Request aur response ke bich wala system(isko backend ke main file me dalte hai taki pura backend me aa jaye middleware)
 
 //*Middlewares to handle CORS
 app.use(

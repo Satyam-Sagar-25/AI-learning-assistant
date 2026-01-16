@@ -31,9 +31,10 @@ const userSchema = mongoose.Schema({
 });
 
 // Hash password before saving
-userSchema.pre("save",async function(next){
+userSchema.pre('save',async function(next){//use a normal function, not an arrow function
     if(!this.isModified("password")){//When you update other fields (like email or name), you don’t want to re-hash 
         next();                      //the already hashed password.
+        
     }
 
     const salt = await bcrypt.genSalt(10);
