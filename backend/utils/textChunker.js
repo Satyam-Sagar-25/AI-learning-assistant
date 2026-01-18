@@ -147,11 +147,12 @@ export const findRelevantChunks = (chunks,query,maxChunks = 3)=>{
         //Score each query word
         for(const word of queryWords){
             //Exact word match (higher score)
-            const exactMatches = (content.match(new RegExp(`\\b${word}\\b`,'g'))||[]).length;
+            const exactMatches = (content.match(new RegExp(`\\b${word}\\b`,'g'))||[]).length;//\b means word boundary.
+                                                        //Example: searching cat won’t match category
             score+=exactMatches*3;
 
             // Partial match(lower score)
-            const partialMatches = (content.match(new RegExp(word,'g'))||[]).length;
+            const partialMatches = (content.match(new RegExp(word,'g'))||[]).length;//cat would match category, catalog, etc.
             score+=Math.max(0,partialMatches-exactMatches)*1.5;
         }
 
@@ -179,7 +180,7 @@ export const findRelevantChunks = (chunks,query,maxChunks = 3)=>{
         };
     });
 
-    return scoredChunks.filter(chunk=>chunk.score>0).sort((a,b)=>{
+    return scoredChunks.filter(chunk=>chunk.score>0).sort((a,b)=>{//sort ka comparator
         if(b.score!==a.score){
             return b.score-a.score;
         }

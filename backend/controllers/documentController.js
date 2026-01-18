@@ -11,6 +11,50 @@ import mongoose from "mongoose";
 // @access  Private
 export const uploadDocument = async (req,res,next)=>{
     try{
+        if(!req.file) {
+            return res.status(400).json({
+                success:false,
+                error:"Please upload a PDF file",
+                statusCode:400
+            });
+        }
+
+        const {title} = req.body;
+        if(!title){
+            //Delete uploaded file if no title provided
+            await fs.unlink(req.file.path);
+            return res.status(400).json({
+                success:false,
+                error: "Please provide a document title",
+                statusCode:400
+            });
+        }
+
+        //Construct a URL for uploaded file
+        const baseUrl = `https://localhost:${process.env.PORT || 8000}`;
+        const fileUrl = `${baseUrl}/uploads/documents/${req.file.filename}`;
+
+        //Create document record
+        const document = await Document.create({
+            userId:req.user._id,
+            title,
+            fileName:req.file.originalname,
+            filePath:fileUrl, //Store the URL instead of the local path
+            fileSize:req.file.size,
+            status:"processing",
+        });
+
+        //Process PDF in background (in production,use a queue like Bull)
+        processPDF(document._id,req.file.path).catch(err=>{//The PDF is being processed asynchronously
+            console.error("PDF processing error:",err);
+        });
+
+        res.status(201).json({
+            success:true,
+            data:document,
+            message:"Document uploaded successfully. Processing in progress..."
+        })
+
 
     }catch(error){
         //Clean up file on error
@@ -21,30 +65,148 @@ export const uploadDocument = async (req,res,next)=>{
     }
 };
 
+// Helper function to process PDF
+const processPDF = async (documentId,filePath)=>{
+    try{
+        const {text} = await extractTextFromPDF(filePath);
+
+        //Create chunks
+        const chunks = chunkText(text,500,50);
+
+        //Update document
+        await Document.findByIdAndUpdate(documentId,{
+            extractedText: text,
+            chunks:chunks,
+            status:"ready"
+        });
+        console.log(`Document ${documentId} processed successfully`);
+    }catch(error){
+        console.log(`Error processing document ${documentId}:`,error);
+        await Document.findByIdAndUpdate(documentId,{
+            status:"failed"
+        });
+    }
+}
+
 // @desc   Get all user documents
 // @route  GET /api/documents
 // @access Private
 export const getDocuments = async (req,res,next)=>{
+    try{
+        const documents = await Document.aggregate([
+            {
+                $match:{userId:new mongoose.Types.ObjectId(req.user._id)}
+            },{
+                $lookup:{//Look in the flashcards collection
+                    from:"flashcards",
+                    localField:"_id",
+                    foreignField:"documentId",//Match where flashcards.documentId === documents._id
+                    as:"flashcardSets"//Put the matching flashcards into a new array field called flashcardSets
+                }
+            },
+            {
+                $lookup:{ 
+                    from:"quizzes",
+                    localField:"_id",
+                    foreignField:"documentId",
+                    as:"quizzes"
+                }
+            },{
+                $addFields:{//Adds two new fields to each document:
+                    flashcardCount:{$size:"$flashcardSets"},
+                    quizCount:{$size:"$quizzes"}
+                }
+            },{
+                $project:{//Removes fields you don’t want in the final response:
+                    extractedText:0,//Using 0 means “exclude this field”.
+                    chunks:0,
+                    flashcardSets:0,
+                    quizzes:0
+                }
+            },{
+                $sort:{uploadDate:-1}//Sorts the results: By uploadDate In descending order (-1) So newest documents appear first
+            }
+        ]);
 
+        res.status(200).json({
+            success:true,
+            count:documents.length,
+            data:documents
+        })
+    }catch(error){
+        next(error);
+    }
 };
 
 // @desc   Get single document with chunks
 // @route  GET /api/documents/:id
 // @access private
 export const getDocument = async (req,res,next)=>{
+    try{
+        const document = await Document.findOne({
+            _id:req.params.id,
+            userId:req.user._id
+        });
 
+        if(!document){
+            return res.status(404).json({
+                success: false,
+                error: "Document not found",
+                statusCode: 404
+            });
+        }
+
+        // Get counts of associated flashcards and quizzes
+        const flashcardCount = await Flashcard.countDocuments({documentId:document._id,userId:req.user._id});
+        const quizCount = await Quiz.countDocuments({documentId:document._id,userId:req.user._id});
+
+        // Update last accessed
+        document.lastAccessed = Date.now();
+        await document.save();
+
+        //Combine document data with counts
+        const documentData =document.toObject();
+        documentData.flashcardCount = flashcardCount;
+        documentData.quizCount = quizCount;
+
+        res.status(200).json({
+            success:true,
+            data: documentData
+        })
+    }catch(error){
+        next(error);
+    }
 };
 
 // @desc   Delete document
 // @route  DELETE /api/documents/:id
 // @access Private
 export const deleteDocument = async (req,res,next)=>{
+    try{
+        const document = await Document.findOne({
+            _id: req.params.id,
+            userId:req.user._id
+        });
 
-};
+        if(!document){
+            return res.status(404).json({
+                success: false,
+                error:"Document not found",
+                statusCode:404
+            });
+        }
 
-// @desc   Update document title
-// @route  PUT /api/documents/:id
-// @access Private
-export const updateDocument = async (req,res,next)=>{
+        //Delete file from filesystem
+        await fs.unlink(document.filePath).catch(()=>{});
 
+        //Delete document
+        await document.deleteOne();
+
+        res.status(200).json({
+            success:true,
+            message:"Document deleted successfully"
+        });
+    }catch(error){
+        next(error);
+    }
 };
