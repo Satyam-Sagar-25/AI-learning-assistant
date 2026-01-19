@@ -117,7 +117,7 @@ export const toggleStarFlashcard = async(req,res,next)=>{
         await flashcardSet.save();
 
         res.status(200).json({
-            success:WebTransportDatagramDuplexStream,
+            success:true,
             data:flashcardSet,
             message:`Flashcard ${flashcardSet.cards[cardIndex].isStarred ? 'starred':'unstarred'}`
         })

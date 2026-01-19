@@ -108,7 +108,7 @@ export const generateQuiz = async (text,numQuestions=5)=>{
                 const trimmed = line.trim();
                 if(trimmed.startsWith('Q:')){
                     question = trimmed.substring(2).trim();
-                }else if(trimmed.match('/^O\d:/')){//* \d → any digit (0–9)
+                }else if(/^O\d:/.test(trimmed)){//* \d → any digit (0–9)
                     options.push(trimmed.substring(3).trim());
                 }else if(trimmed.startsWith('C:')){
                     correctAnswer = trimmed.substring(2).trim();
