@@ -56,8 +56,6 @@ app.use("/api/quizzes",quizRoutes);
 app.use("/api/progress",progressRoutes);
 
 
-
-
 app.use(errorHandler);
 
 //*404 handler
