@@ -6,6 +6,7 @@ import protect from "../middleware/auth.js";
 const router = express.Router();
 
 router.use(protect);
+//All routes are protected
 
 router.post("/generate-flashcards",generateFlashcards);
 router.post("/generate-quiz",generateQuiz);
