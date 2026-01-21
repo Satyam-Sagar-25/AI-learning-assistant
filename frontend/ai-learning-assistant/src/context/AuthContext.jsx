@@ -5,21 +5,22 @@ const AuthContext = createContext();
 //You create a Context once, provide a value at a high level, and consume it anywhere below
 
 export const useAuth = ()=>{
-    const context = useContext(AuthContext);//Reads the current value of AuthContext.
-    if(!context){//This protects you from using the hook outside of the <AuthProvider>.
+    const context = useContext(AuthContext);//*useContext(AuthContext) reads what AuthProvider stored
+    if(!context){//Throws an error if someone tries to use useAuth without wrapping their app in AuthProvider <AuthProvider>.
         throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
 }
 
-export const AuthProvider = ({children})=>{//The whole point of the provider is to expose auth-related state and functions to the rest of the app
+export const AuthProvider = ({children})=>{//The whole point of the provider is to expose auth-related state and functions to the rest of the app//*{children} represents all components wrapped inside <AuthProvider>
     const [user,setUser] = useState(null);
     const [loading,setLoading] = useState(true);
     const [isAuthenticated,setIsAuthenticated] = useState(false);
 
     useEffect(()=>{
         checkAuthStatus();
-    },[]);
+    },[]);//The empty dependency array [] means:→ Run this effect only once, after the initial render
+    
 
     const checkAuthStatus = async ()=>{
         try {
@@ -73,4 +74,5 @@ export const AuthProvider = ({children})=>{//The whole point of the provider is 
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    //Makes value available to all components inside <AuthProvider>
 };

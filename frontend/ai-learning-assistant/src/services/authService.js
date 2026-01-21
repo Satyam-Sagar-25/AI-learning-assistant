@@ -12,6 +12,7 @@ const login = async (email,password)=>{
         });
         return response.data;
     }catch(error){
+        console.log(error);
         throw error.response?.data || {message: "An unknown error occured"};
     }
 }

@@ -20,7 +20,8 @@ import FlashcardListPage from "./pages/Flashcards/FlashcardListPage";
 import { useAuth } from "./context/AuthContext";
 
 const App = () => {
-    const {isAuthenticated,loading} = useAuth();
+    const { isAuthenticated, loading } = useAuth();
+    //You are actually doing:-const value = useContext(AuthContext);And value is the same object defined in AuthProvider:
 
     if (loading) {
         return (
@@ -43,24 +44,57 @@ const App = () => {
                         )
                     }
                 />
-				<Route path="/login" element={<LoginPage />}/>
-				<Route path="/register" element={<RegisterPage/>}/>
+                {/* <Route path="/login" element={<LoginPage />} /> */}
+                <Route
+                    path="/login"
+                    element={
+                        isAuthenticated ? (
+                            <Navigate to="/dashboard" replace />
+                        ) : (
+                            <LoginPage />
+                        )
+                    }
+                />
+                {/* <Route path="/register" element={<RegisterPage />} /> */}
+                <Route
+                    path="/register"
+                    element={
+                        isAuthenticated ? (
+                            <Navigate to="/dashboard" replace />
+                        ) : (
+                            <RegisterPage />
+                        )
+                    }
+                />
 
-				{/* Protected Routes */}
-				<Route element={<ProtectedRoute/>}>
-					<Route path={"/dashboard"} element={<DashboardPage/>}/>
-					<Route path={"/documents"} element={<DocumentListPage/>}/>
-					<Route path={"/documents/:id"} element={<DocumentsDetailPage/>}/>
-					<Route path={"/flashcards"} element={<FlashcardListPage/>}/>
-					<Route path={"/documents/:id/flashcards"} element={<FlashcardPage/>}/>
-					<Route path={"/quizzes/:quizId"} element={<QuizTakePage/>}/>
-					<Route path={"/quizzes/:quizId/results"} element={<QuizResultPage/>}/>
-					<Route path={"/profile"} element={<ProfilePage/>}/>
-				</Route>
-					
-				
+                {/* Protected Routes */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path={"/dashboard"} element={<DashboardPage />} />
+                    <Route path={"/documents"} element={<DocumentListPage />} />
+                    <Route
+                        path={"/documents/:id"}
+                        element={<DocumentsDetailPage />}
+                    />
+                    <Route
+                        path={"/flashcards"}
+                        element={<FlashcardListPage />}
+                    />
+                    <Route
+                        path={"/documents/:id/flashcards"}
+                        element={<FlashcardPage />}
+                    />
+                    <Route
+                        path={"/quizzes/:quizId"}
+                        element={<QuizTakePage />}
+                    />
+                    <Route
+                        path={"/quizzes/:quizId/results"}
+                        element={<QuizResultPage />}
+                    />
+                    <Route path={"/profile"} element={<ProfilePage />} />
+                </Route>
 
-				<Route path="*" element={<NotFoundPage/>}/>
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </Router>
     );
