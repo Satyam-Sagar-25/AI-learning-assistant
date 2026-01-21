@@ -62,17 +62,17 @@ const RegisterPage = () => {
                     </div>
 
 					{/* Form */}
-					<div className="">
+					<div className="space-y-5">
 						{/* Username Field */}
-						<div className="">
-							<label className="">
+						<div className="space-y-2">
+							<label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide">
 								Username
 							</label>
-							<div className="">
+							<div className="relative group">
 								<div className={`absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-200 ${
 									focusedField==="username"?"text-emerald-500":"text-slate-400"
 								}`}>
-									<User className="" strokeWidth={2} />
+									<User className="h-5 w-5" strokeWidth={2} />
 								</div>
 								<input 
 									type="text"
@@ -80,20 +80,20 @@ const RegisterPage = () => {
 									onChange={(e)=>setUsername(e.target.value)}
 									onFocus={()=>setFocusedField("username")}
 									onBlur={()=>setFocusedField(null)}
-									className=""
-									placeholder="yourusername"
+									className="w-full h-12 pl-12 pr-4 border-2 border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 placeholder-slate-400 text-sm font-medium transition-all duration-200 focus:outline-none focus:border-emerald-500 focus:bg-white focus:shadow-lg focus:shadow-emerald-500/10"
+									placeholder="your name"
 								/>
 							</div>
 						</div>
 
 						{/* Email Field */}
-						<div className="">
-							<label className="">Email</label>
-							<div className="">
+						<div className="space-y-2">
+							<label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide">Email</label>
+							<div className="relative group">
 								<div className={`absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-200 ${
 									focusedField==="email"?"text-emerald-500":"text-slate-400"
 								}`}>
-									<Mail className="" strokeWidth={2} />
+									<Mail className="h-5 w-5" strokeWidth={2} />
 
 								</div>
 								<input
@@ -102,22 +102,22 @@ const RegisterPage = () => {
 									onChange={(e)=>setEmail(e.target.value)}
 									onFocus={()=>setFocusedField("email")}
 									onBlur={()=>setFocusedField(null)}
-									className=""
+									className="w-full h-12 pl-12 pr-4 border-2 border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 placeholder-slate-400 text-sm font-medium transition-all duration-200 focus:outline-none focus:border-emerald-500 focus:bg-white focus:shadow-lg focus:shadow-emerald-500/10"
 									placeholder="you@example.com"	
 								/>
 							</div>
 						</div>
 
 						{/* Password Field */}
-						<div className="">
-							<label className="">
+						<div className="space-y-2">
+							<label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide">
 								Password
 							</label>
-							<div className="">
-								<div className={`absolute inset-y-0 left-0 pi-4 flex items-center pointer-events-none transition-colors duration-200 ${
+							<div className="relative group">
+								<div className={`absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-200 ${
 									focusedField==="password"?"text-emerald-500":"text-slate-400"
 								}`}>
-									<Lock className="" strokeWidth={2} />
+									<Lock className="h-5 w-5" strokeWidth={2} />
 								</div>
 								<input 
 									type="password"
@@ -125,7 +125,7 @@ const RegisterPage = () => {
 									onChange={(e)=>setPassword(e.target.value)}
 									onFocus={()=> setFocusedField("password")}
 									onBlur={()=>setFocusedField(null)}
-									className=""
+									className="w-full h-12 pl-12 pr-4 border-2 border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 placeholder-slate-400 text-sm font-medium transition-all duration-200 focus:outline-none focus:border-emerald-500 focus:bg-white focus:shadow-lg focus:shadow-emerald-500/10"
 									placeholder="*******"
 								/>
 							</div>
@@ -133,8 +133,8 @@ const RegisterPage = () => {
 
 						{/* Error Message */}
 						{error && (
-							<div className="">
-								<p className="">
+							<div className="rounded-lg bg-red-50 border border-red-200 p-3">
+								<p className="text-xs text-red-600 font-medium text-center">
 									{error}
 								</p>
 							</div>
@@ -144,25 +144,25 @@ const RegisterPage = () => {
 						<button 
 							onClick={handleSubmit}
 							disabled={loading}
-							className=""
+							className="group relative w-full h-12 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 active:scale-[0.98] text-white text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 shadow-lg shadow-emerald-500/25 overflow-hidden"
 						>
-							<span className="">
+							<span className="relative z-10 flex items-center justify-center gap-2">
 								{loading ?(
 										<>
-											<div className=""/>
+											<div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
 											Creating account...
 										</>
 									): (
 										<>
 											Create account
 											<ArrowRight
-												className=""
+												className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200"
 												strokeWidth={2.5}
 											/>
 										</>
 									)}
 							</span>
-							<div className=""/>
+							<div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"/>
 						</button>
 					</div>
 
