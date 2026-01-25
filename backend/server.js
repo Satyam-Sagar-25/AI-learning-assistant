@@ -31,7 +31,7 @@ connectDB();
 //*Middlewares to handle CORS
 app.use(
     cors({ // cross origin resource sharing
-        origin:"*", // * -> Allows requests from any domain.
+        origin:"https://ai-learning-assistant-frontend-nyw2.vercel.app", // * -> Allows requests from any domain.
         methods: ["GET","POST","PUT","DELETE"],//Allows only these HTTP methods from cross-origin requests
         allowedHeaders:["Content-Type","Authorization"],//Content-Type → for JSON, form data, etc. etc.                                              //Authorization → for JWT tokens or auth headers
         credentials: true,//Allows cookies, authorization headers, or TLS client certificates to be sent in cross-origin requests.
