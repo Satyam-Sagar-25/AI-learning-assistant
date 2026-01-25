@@ -1,6 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPath";
-import { deleteQuiz } from "../../../../backend/controllers/quizController";
 
 const getQuizzesForDocument= async (documentId)=>{
     try {
@@ -32,6 +31,15 @@ const submitQuiz = async (quizId,answers)=>{
 const getQuizResults = async (quizId)=>{
     try {
         const response = await axiosInstance.get(API_PATHS.QUIZZES.GET_QUIZ_RESULTS(quizId));
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || {message:"Failed to delete quiz"};
+    }
+}
+
+const deleteQuiz = async (quizId) =>{
+    try {
+        const response = await axiosInstance.delete(API_PATHS.QUIZZES.DELETE_QUIZ(quizId));
         return response.data;
     } catch (error) {
         throw error.response?.data || {message:"Failed to delete quiz"};
